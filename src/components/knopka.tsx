@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Document, Page } from 'react-pdf';
 import { PDFDocument } from 'pdf-lib';
 
+
 interface PageSize {
   width: number;
   height: number;
@@ -53,7 +54,7 @@ const PdfViewer: React.FC = () => {
             const getPageSizeType = ({ width, height }: PageSize) => {
               const a4Width = 210;
               const a4Height = 297;
-              const tolerance = 0.01; // 1% tolerance
+              const tolerance = 5; // 1% tolerance
             
               if (Math.abs((width - a4Width) / a4Width) < tolerance && Math.abs((height - a4Height) / a4Height) < tolerance) {
                 return 'A4';
