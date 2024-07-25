@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Document, Page } from 'react-pdf';
 import { PDFDocument } from 'pdf-lib';
 
-
 interface PageSize {
   width: number;
   height: number;
@@ -11,14 +10,7 @@ interface PageSize {
 const PdfViewer: React.FC = () => {
   const [numPages, setNumPages] = useState(0);
   const [file, setFile] = useState<File | null>(null);
-  const [sizes, setSizes] = useState<Record<string, number>>({
-    A4: 0,
-    A3: 0,
-    A2: 0,
-    A1: 0,
-    A0: 0,
-    nonStandard: 0,
-  });
+  const [sizes, setSizes] = useState<Record<string, number>>({});
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -37,24 +29,21 @@ const PdfViewer: React.FC = () => {
           const pdfDoc = await PDFDocument.load(arrayBuffer);
           const pages = pdfDoc.getPages();
 
-          const sizes: Record<string, number> = {
-            A4: 0,
-            A3: 0,
-            A2: 0,
-            A1: 0,
-            A0: 0,
-            nonStandard: 0,
-          };
+          const sizes: Record<string, number> = {};
 
           pages.forEach((page) => {
             const pageSize: PageSize = page.getSize();
-            const width = pageSize.width;
-            const height = pageSize.height;
+            const mmPerPoint = 0.352777778;
+            const widthMM = Math.round(pageSize.width * mmPerPoint);
+            const heightMM = Math.round(pageSize.height * mmPerPoint);
 
             const getPageSizeType = ({ width, height }: PageSize) => {
               const a4Width = 210;
               const a4Height = 297;
-              const tolerance = 5; // 1% tolerance
+              const tolerance = 0.5; 
+            
+              width = Math.round(width);
+              height = Math.round(height);
             
               if (Math.abs((width - a4Width) / a4Width) < tolerance && Math.abs((height - a4Height) / a4Height) < tolerance) {
                 return 'A4';
@@ -67,11 +56,11 @@ const PdfViewer: React.FC = () => {
               } else if (Math.abs((width - 841) / 841) < tolerance && Math.abs((height - 1189) / 1189) < tolerance) {
                 return 'A0';
               } else {
-                return 'nonStandard';
+                return `${width}x${height} мм`;
               }
             };
-            const pageSizeType = getPageSizeType(pageSize);
-            sizes[pageSizeType]++;
+            const pageSizeType = getPageSizeType({ width: widthMM, height: heightMM });
+            sizes[pageSizeType] = (sizes[pageSizeType] || 0) + 1;
           });
 
           resolve(sizes);
@@ -107,7 +96,7 @@ const PdfViewer: React.FC = () => {
       )}
 
       <div>
-        {Object.keys(sizes).map((size) => (
+        {Object.keys(sizes).map(size => (
           <p key={size}>{size}: {sizes[size]}шт</p>
         ))}
       </div>
