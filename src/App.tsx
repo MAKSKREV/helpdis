@@ -4,14 +4,23 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import Knopka from './components/knopka'
 
-function App() {
-  const [count, setCount] = useState(0)
 
+function App() {
+  const [file, setFile] = useState<File | null>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setFile(file);
+    } else {
+      setFile(null);
+    }
+  };
   return (
     <>
     <Knopka/>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

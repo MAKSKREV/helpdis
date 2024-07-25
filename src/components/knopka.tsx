@@ -11,6 +11,8 @@ const PdfViewer: React.FC = () => {
   const [numPages, setNumPages] = useState(0);
   const [file, setFile] = useState<File | null>(null);
   const [sizes, setSizes] = useState<Record<string, number>>({});
+  const [colorType, setColorType] = useState<Record<string, 'цветной' | 'чёрно-белый'>>({});
+  const [totalPrice, setTotalPrice] = useState(0);
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -40,11 +42,11 @@ const PdfViewer: React.FC = () => {
             const getPageSizeType = ({ width, height }: PageSize) => {
               const a4Width = 210;
               const a4Height = 297;
-              const tolerance = 0.5; 
-            
+              const tolerance = 0.5; // 3.1% tolerance
+
               width = Math.round(width);
               height = Math.round(height);
-            
+
               if (Math.abs((width - a4Width) / a4Width) < tolerance && Math.abs((height - a4Height) / a4Height) < tolerance) {
                 return 'A4';
               } else if (Math.abs((width - 297) / 297) < tolerance && Math.abs((height - 420) / 420) < tolerance) {
@@ -79,9 +81,163 @@ const PdfViewer: React.FC = () => {
     if (file) {
       const sizes = await countPagesBySize(file);
       setSizes(sizes);
+      const colorTypes: Record<string, 'цветной' | 'чёрно-белый'> = {};
+      Object.keys(sizes).forEach((size) => {
+        colorTypes[size] = 'чёрно-белый'; // по умолчанию чёрно-белый
+      });
+      setColorType(colorTypes);
+      calculatePrice(sizes, colorTypes);
     }
   };
 
+  const calculatePrice = (sizes: Record<string, number>, colorTypes: Record<string, 'цветной' | 'чёрно-белый'>) => {
+    let totalPrice = 0;
+    Object.keys(sizes).forEach((size) => {
+      const count = sizes[size];
+      const colorType = colorTypes[size];
+      let price = 0;
+      switch (size) {
+        case 'A0':
+          price = colorType === 'чёрно-белый' ? 230 : 330;
+          break;
+        case 'A1':
+          price = colorType === 'чёрно-белый' ? 175 : 275;
+          break;
+        case 'A2':
+          price = colorType === 'чёрно-белый' ? 120 : 220;
+          break;
+        case 'A3':
+          if (colorType === 'чёрно-белый') {
+            if (count <= 20) {
+              price = 40;
+            } else if (count <= 49) {
+              price = 36;
+            } else if (count <= 99) {
+              price = 32;
+            } else if (count <= 249) {
+              price = 28;
+            } else {
+              price = 24;
+            }
+          } else {
+            if (count <= 20) {
+              price = 100;
+            } else if (count <= 49) {
+              price = 90;
+            } else if (count <= 99) {
+              price = 80;
+            } else if (count <= 499) {
+              price = 75;
+            } else {
+              price = 60;
+            }
+          }
+          break;
+        case 'A4':
+          if (colorType === 'чёрно-белый') {
+            if (count <= 20) {
+              price = 20;
+            } else if (count <= 49) {
+              price = 18;
+            } else if (count <= 99) {
+              price = 16;
+            } else if (count <= 249) {
+              price = 14;
+            } else {
+              price = 12;
+            }
+          } else {
+            if (count <= 20) {
+              price = 50;
+            } else if (count <= 49) {
+              price = 45;
+            } else if (count <= 99) {
+              price = 40;
+            } else if (count <= 499) {
+              price = 35;
+            } else {
+              price = 30;
+            }
+          }
+          break;
+        default:
+          price = 0;
+      }
+      totalPrice += price * count;
+    });
+    setTotalPrice(totalPrice);
+  };
+
+  const handleColorTypeChange = (size: string, newColorType: 'цветной' | 'чёрно-белый') => {
+    const newColorTypes = { ...colorType };
+    newColorTypes[size] = newColorType;
+    setColorType(newColorTypes);
+    calculatePrice(sizes, newColorTypes);
+  };
+  const getPrice = (size: string, colorType: 'цветной' | 'чёрно-белый', count: number) => {
+    switch (size) {
+      case 'A0':
+        return colorType === 'чёрно-белый'? 230 * count : 330 * count;
+      case 'A1':
+        return colorType === 'чёрно-белый'? 175 * count : 275 * count;
+      case 'A2':
+        return colorType === 'чёрно-белый'? 120 * count : 220 * count;
+      case 'A3':
+        if (colorType === 'чёрно-белый') {
+          if (count <= 20) {
+            return 40 * count;
+          } else if (count <= 49) {
+            return 36 * count;
+          } else if (count <= 99) {
+            return 32 * count;
+          } else if (count <= 249) {
+            return 28 * count;
+          } else {
+            return 24 * count;
+          }
+        } else {
+          if (count <= 20) {
+            return 100 * count;
+          } else if (count <= 49) {
+            return 90 * count;
+          } else if (count <= 99) {
+            return 80 * count;
+          } else if (count <= 499) {
+            return 75 * count;
+          } else {
+            return 60 * count;
+          }
+        }
+      case 'A4':
+        if (colorType === 'чёрно-белый') {
+          if (count <= 20) {
+            return 20 * count;
+          } else if (count <= 49) {
+            return 18 * count;
+          } else if (count <= 99) {
+            return 16 * count;
+          } else if (count <= 249) {
+            return 14 * count;
+          } else {
+            return 12 * count;
+          }
+        } else {
+          if (count <= 20) {
+            return 50 * count;
+          } else if (count <= 49) {
+            return 45 * count;
+          } else if (count <= 99) {
+            return 40 * count;
+          } else if (count <= 499) {
+            return 35 * count;
+          } else {
+            return 30 * count;
+          }
+        }
+      default:
+        return 0;
+    }
+  };
   return (
     <div>
       <input type="file" onChange={onFileChange} />
@@ -95,11 +251,28 @@ const PdfViewer: React.FC = () => {
         </Document>
       )}
 
-      <div>
-        {Object.keys(sizes).map(size => (
-          <p key={size}>{size}: {sizes[size]}шт</p>
-        ))}
-      </div>
+<div>
+  {Object.keys(sizes).map((size) => (
+    <div key={size}>
+      <p>
+        {size}: {sizes[size]}шт
+        <span style={{ marginLeft: 10 }}>
+          Стоимость: {getPrice(size, colorType[size], sizes[size])} руб.
+        </span>
+      </p>
+      <select
+        value={colorType[size]}
+        onChange={(e) => handleColorTypeChange(size, e.target.value as 'цветной' | 'чёрно-белый')}
+      >
+        <option value="чёрно-белый">Чёрно-белый</option>
+        <option value="цветной">Цветной</option>
+      </select>
+    </div>
+  ))}
+</div>
+
+
+      <p>Итого: {totalPrice}руб.</p>
     </div>
   );
 };
