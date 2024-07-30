@@ -8,7 +8,7 @@ interface PageSize {
 }
 
 const PdfViewer: React.FC = () => {
-  const [numPages, setNumPages] = useState(0);
+  const [numPages] = useState(0);
   const [file, setFile] = useState<File | null>(null);
   const [sizes, setSizes] = useState<Record<string, number>>({});
   const [colorType, setColorType] = useState<Record<string, 'цветной' | 'чёрно-белый'>>({});
@@ -111,7 +111,7 @@ const PdfViewer: React.FC = () => {
             if (count <= 20) {
               price = 45;
             } else if (count <= 49) {
-              price = 41;
+              price = 31;
             } else if (count <= 99) {
               price = 37;
             } else if (count <= 249) {
@@ -127,7 +127,7 @@ const PdfViewer: React.FC = () => {
             } else if (count <= 99) {
               price = 85;
             } else if (count <= 499) {
-              price = 80;
+              price = 75;
             } else {
               price = 65;
             }
@@ -203,7 +203,7 @@ const PdfViewer: React.FC = () => {
           } else if (count <= 99) {
             return 85 * count;
           } else if (count <= 499) {
-            return 80 * count;
+            return 75 * count;
           } else {
             return 65 * count;
           }
@@ -245,7 +245,7 @@ const PdfViewer: React.FC = () => {
 
       {file && (
         <Document file={file}>
-          {Array.from(new Array(numPages), (el, index) => (
+          {Array.from(new Array(numPages), (index) => (
             <Page key={`page_${index + 1}`} pageNumber={index + 1} />
           ))}
         </Document>
