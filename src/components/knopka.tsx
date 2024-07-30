@@ -109,27 +109,27 @@ const PdfViewer: React.FC = () => {
         case 'A3':
           if (colorType === 'чёрно-белый') {
             if (count <= 20) {
-              price = 40;
+              price = 45;
             } else if (count <= 49) {
-              price = 36;
+              price = 41;
             } else if (count <= 99) {
-              price = 32;
+              price = 37;
             } else if (count <= 249) {
-              price = 28;
+              price = 33;
             } else {
-              price = 24;
+              price = 29;
             }
           } else {
             if (count <= 20) {
-              price = 100;
+              price = 105;
             } else if (count <= 49) {
-              price = 90;
+              price = 95;
             } else if (count <= 99) {
-              price = 80;
+              price = 85;
             } else if (count <= 499) {
-              price = 75;
+              price = 80;
             } else {
-              price = 60;
+              price = 65;
             }
           }
           break;
@@ -185,27 +185,27 @@ const PdfViewer: React.FC = () => {
       case 'A3':
         if (colorType === 'чёрно-белый') {
           if (count <= 20) {
-            return 40 * count;
+            return 45 * count;
           } else if (count <= 49) {
-            return 36 * count;
+            return 41 * count;
           } else if (count <= 99) {
-            return 32 * count;
+            return 37 * count;
           } else if (count <= 249) {
-            return 28 * count;
+            return 33 * count;
           } else {
-            return 24 * count;
+            return 29 * count;
           }
         } else {
           if (count <= 20) {
-            return 100 * count;
+            return 105 * count;
           } else if (count <= 49) {
-            return 90 * count;
+            return 95 * count;
           } else if (count <= 99) {
-            return 80 * count;
+            return 85 * count;
           } else if (count <= 499) {
-            return 75 * count;
+            return 80 * count;
           } else {
-            return 60 * count;
+            return 65 * count;
           }
         }
       case 'A4':
