@@ -42,21 +42,26 @@ const PdfViewer: React.FC = () => {
             const getPageSizeType = ({ width, height }: PageSize) => {
               const a4Width = 210;
               const a4Height = 297;
-              const tolerance = 0.5; // 3.1% tolerance
+              const tolerance = 0.2;
 
               width = Math.round(width);
               height = Math.round(height);
 
-              if (Math.abs((width - a4Width) / a4Width) < tolerance && Math.abs((height - a4Height) / a4Height) < tolerance) {
-                return 'A4';
-              } else if (Math.abs((width - 297) / 297) < tolerance && Math.abs((height - 420) / 420) < tolerance) {
-                return 'A3';
-              } else if (Math.abs((width - 420) / 420) < tolerance && Math.abs((height - 594) / 594) < tolerance) {
-                return 'A2';
-              } else if (Math.abs((width - 594) / 594) < tolerance && Math.abs((height - 841) / 841) < tolerance) {
-                return 'A1';
-              } else if (Math.abs((width - 841) / 841) < tolerance && Math.abs((height - 1189) / 1189) < tolerance) {
-                return 'A0';
+              if  ((Math.abs((width - a4Width) / a4Width) < tolerance && Math.abs((height - a4Height) / a4Height) < tolerance) ||
+              (Math.abs((width - a4Height) / a4Height) < tolerance && Math.abs((height -  a4Width) / a4Width) < tolerance)) {
+                   return 'A4';
+              } else if ((Math.abs((width - 297) / 297) < tolerance && Math.abs((height - 420) / 420) < tolerance) ||
+              (Math.abs((width - 420) / 420) < tolerance && Math.abs((height - 297) / 297) < tolerance)) {
+                   return 'A3';
+              } else if ((Math.abs((width - 420) / 420) < tolerance && Math.abs((height - 594) / 594) < tolerance) ||
+                  (Math.abs((width - 594) / 594) < tolerance && Math.abs((height - 420) / 420) < tolerance)) {
+                    return 'A2';
+              } else if ((Math.abs((width - 594) / 594) < tolerance && Math.abs((height - 841) / 841) < tolerance) ||
+                  (Math.abs((width - 841) / 841) < tolerance && Math.abs((height -  594) /  594) < tolerance)) {
+                    return 'A1';
+              } else if ((Math.abs((width - 841) / 841) < tolerance && Math.abs((height - 1189) / 1189) < tolerance) ||
+                  (Math.abs((width - 1189) / 1189) < tolerance && Math.abs((height -  841) /  841) < tolerance)) {
+                       return 'A0';
               } else {
                 return `${width}x${height} мм`;
               }
@@ -83,7 +88,7 @@ const PdfViewer: React.FC = () => {
       setSizes(sizes);
       const colorTypes: Record<string, 'цветной' | 'чёрно-белый'> = {};
       Object.keys(sizes).forEach((size) => {
-        colorTypes[size] = 'чёрно-белый'; // по умолчанию чёрно-белый
+        colorTypes[size] = 'чёрно-белый'; 
       });
       setColorType(colorTypes);
       calculatePrice(sizes, colorTypes);
